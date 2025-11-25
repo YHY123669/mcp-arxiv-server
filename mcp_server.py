@@ -91,15 +91,17 @@ async def search_papers(query: str, max_results: int = 5) -> str:
     return "\n".join(formatted_output)
 
 
-# --- [修改2] 下面是针对云部署的核心修改 ---
+# --- [修改2] 针对 Hugging Face Spaces 的核心修改 ---
 if __name__ == "__main__":
-    # 获取 Render/Railway 等平台提供的端口，如果没有则默认 8000
-    port = int(os.getenv("PORT", 8000))
+    # 1. Hugging Face 强制要求默认端口为 7860
+    # 我们优先读取环境变量，如果没有读取到，默认使用 7860
+    port = int(os.getenv("PORT", 7860))
 
     print(f"Starting MCP Server on 0.0.0.0:{port}")
 
-    # 关键参数：
-    # host="0.0.0.0" 表示允许外部（公网）访问
-    # port=port 使用云平台指定的端口
+    # 2. 启动服务
+    # host="0.0.0.0" 表示允许外部访问 (必须)
+    # port=port 使用 7860 (必须)
     mcp.run(transport="sse", host="0.0.0.0", port=port)
+
 
